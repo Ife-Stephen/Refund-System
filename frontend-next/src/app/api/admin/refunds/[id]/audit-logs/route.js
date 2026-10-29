@@ -1,40 +1,55 @@
-
 import { NextResponse } from "next/server";
 
-export async function GET(_request, { params }) {
+export async function GET() {
   try {
-    const { id } = await params;
+    const backendUrl =
+      process.env.BACKEND_URL ||
+      process.env.REFUND_API_URL ||
+      (process.env.NODE_ENV === "production"
+        ? ""
+        : "http://backend:8000");
 
-    if (!/^\d+$/.test(id)) {
+    if (!backendUrl) {
+      console.error(
+        "Backend URL is not configured. Check the Vercel service binding."
+      );
+
       return NextResponse.json(
-        { detail: "Invalid refund reference." },
-        { status: 400 }
+        { detail: "Refund service is not configured." },
+        { status: 503 }
       );
     }
 
-    const backendUrl =
-      process.env.REFUND_API_URL || "http://backend:8000";
+    const url = new URL("/refunds?limit=100", backendUrl);
 
-    const response = await fetch(
-      `${backendUrl}/refunds/${id}/audit-logs`,
-      { cache: "no-store" }
-    );
+    const response = await fetch(url, {
+      method: "GET",
+      cache: "no-store",
+      headers: {
+        Accept: "application/json",
+      },
+    });
 
     const text = await response.text();
+
     let data;
 
     try {
       data = JSON.parse(text);
     } catch {
-      data = { detail: text || "Unexpected backend response" };
+      data = {
+        detail: text || "Unexpected backend response",
+      };
     }
 
-    return NextResponse.json(data, { status: response.status });
+    return NextResponse.json(data, {
+      status: response.status,
+    });
   } catch (error) {
-    console.error("Audit log proxy error:", error);
+    console.error("Admin refunds proxy error:", error);
 
     return NextResponse.json(
-      { detail: "Unable to retrieve audit history." },
+      { detail: "Unable to connect to the refund service." },
       { status: 502 }
     );
   }
