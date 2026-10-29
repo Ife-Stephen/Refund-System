@@ -1,0 +1,12 @@
+
+{
+  "return_window_days": 30,
+  "review_threshold": 500,
+  "final_sale_allowed": false,
+  "reasons_eligible_for_review": [
+    "damaged",
+    "wrong_item",
+    "not_received",
+    "not_as_described"
+  ]
+}

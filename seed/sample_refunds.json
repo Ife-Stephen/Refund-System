@@ -1,0 +1,20 @@
+[
+  {
+    "order_id": "ORD-1001",
+    "customer_email": "alex@example.com",
+    "purchase_date": "2026-10-01",
+    "amount": 49.99,
+    "reason": "damaged",
+    "item_is_final_sale": false,
+    "details": "The item arrived damaged."
+  },
+  {
+    "order_id": "ORD-1002",
+    "customer_email": "jamie@example.com",
+    "purchase_date": "2026-09-01",
+    "amount": 75.0,
+    "reason": "changed_mind",
+    "item_is_final_sale": false,
+    "details": "I no longer need this item."
+  }
+]

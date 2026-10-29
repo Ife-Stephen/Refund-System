@@ -1,0 +1,16 @@
+customer_ref,first_name,last_name,email,phone,segment,joined_days_ago,support_notes
+CUS-1001,Alice,Carter,alice.carter@example.com,+1-202-555-0101,standard,510,Prefers email updates.
+CUS-1002,Bruno,Miles,bruno.miles@example.com,+1-202-555-0102,premium,730,High-value customer; verify larger claims.
+CUS-1003,Chloe,Reid,chloe.reid@example.com,+1-202-555-0103,standard,240,No special handling notes.
+CUS-1004,Daniel,Brooks,daniel.brooks@example.com,+1-202-555-0104,standard,800,Older customer account.
+CUS-1005,Elena,Foster,elena.foster@example.com,+1-202-555-0105,loyal,930,Repeat customer.
+CUS-1006,Felix,Parker,felix.parker@example.com,+1-202-555-0106,standard,180,No special handling notes.
+CUS-1007,Grace,Kim,grace.kim@example.com,+1-202-555-0107,standard,370,No special handling notes.
+CUS-1008,Hassan,Bello,hassan.bello@example.com,+1-202-555-0108,standard,410,Customer once asked for delivery confirmation.
+CUS-1009,Isla,Morgan,isla.morgan@example.com,+1-202-555-0109,premium,660,Orders are generally high value.
+CUS-1010,Jacob,Bennett,jacob.bennett@example.com,+1-202-555-0110,standard,250,No special handling notes.
+CUS-1011,Kemi,Adeyemi,kemi.adeyemi@example.com,+1-202-555-0111,premium,540,Human review required for high-value refund requests.
+CUS-1012,Liam,OConnor,liam.oconnor@example.com,+1-202-555-0112,loyal,1020,Repeat customer.
+CUS-1013,Maya,Patel,maya.patel@example.com,+1-202-555-0113,standard,320,History includes a final-sale item.
+CUS-1014,Noah,Williams,noah.williams@example.com,+1-202-555-0114,standard,125,Newer customer account.
+CUS-1015,Olivia,James,olivia.james@example.com,+1-202-555-0115,loyal,860,Repeat customer.
