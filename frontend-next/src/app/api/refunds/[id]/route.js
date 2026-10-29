@@ -4,42 +4,91 @@ import { NextResponse } from "next/server";
 export async function GET(request, { params }) {
   try {
     const { id } = await params;
+
     const email = request.nextUrl.searchParams
       .get("email")
       ?.trim()
       .toLowerCase();
 
-    if (!/^\d+$/.test(id) || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (
+      !/^\d+$/.test(id) ||
+      !email ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    ) {
       return NextResponse.json(
-        { detail: "Enter a valid reference number and email address." },
+        {
+          detail:
+            "Enter a valid reference number and email address.",
+        },
         { status: 400 }
       );
     }
 
     const backendUrl =
-      process.env.REFUND_API_URL || "http://backend:8000";
+      process.env.BACKEND_URL ||
+      process.env.REFUND_API_URL ||
+      (process.env.NODE_ENV === "production"
+        ? ""
+        : "http://backend:8000");
 
-    const response = await fetch(
-      `${backendUrl}/refunds/${encodeURIComponent(id)}`,
-      { cache: "no-store" }
+    if (!backendUrl) {
+      console.error(
+        "Backend URL is not configured. Check the Vercel service binding."
+      );
+
+      return NextResponse.json(
+        { detail: "Refund service is not configured." },
+        { status: 503 }
+      );
+    }
+
+    const url = new URL(
+      `/refunds/${encodeURIComponent(id)}`,
+      backendUrl
     );
 
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+      cache: "no-store",
+    });
+
     if (!response.ok) {
+      if (response.status === 404) {
+        return NextResponse.json(
+          {
+            detail:
+              "We could not find a matching refund request.",
+          },
+          { status: 404 }
+        );
+      }
+
+      console.error(
+        "Refund tracking backend returned:",
+        response.status
+      );
+
       return NextResponse.json(
-        { detail: "We could not find a matching refund request." },
-        { status: 404 }
+        { detail: "The refund service is temporarily unavailable." },
+        { status: 502 }
       );
     }
 
     const refund = await response.json();
 
-    // Require the email to match before returning the request details.
+    // Require the email to match before returning request details.
     if (
       typeof refund.customer_email !== "string" ||
       refund.customer_email.trim().toLowerCase() !== email
     ) {
       return NextResponse.json(
-        { detail: "We could not find a matching refund request." },
+        {
+          detail:
+            "We could not find a matching refund request.",
+        },
         { status: 404 }
       );
     }
@@ -63,7 +112,9 @@ export async function GET(request, { params }) {
     console.error("Refund tracking lookup failed:", error);
 
     return NextResponse.json(
-      { detail: "The refund service is temporarily unavailable." },
+      {
+        detail: "The refund service is temporarily unavailable.",
+      },
       { status: 502 }
     );
   }
