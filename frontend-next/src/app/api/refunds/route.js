@@ -1,4 +1,4 @@
-﻿
+
 import { NextResponse } from "next/server";
 
 export async function POST(request) {
@@ -6,12 +6,30 @@ export async function POST(request) {
     const body = await request.json();
 
     const backendUrl =
-      process.env.REFUND_API_URL || "http://backend:8000";
+      process.env.BACKEND_URL ||
+      process.env.REFUND_API_URL ||
+      (process.env.NODE_ENV === "production"
+        ? ""
+        : "http://backend:8000");
 
-    const response = await fetch(`${backendUrl}/refunds`, {
+    if (!backendUrl) {
+      console.error(
+        "Backend URL is not configured. Check the Vercel service binding."
+      );
+
+      return NextResponse.json(
+        { detail: "Refund service is not configured." },
+        { status: 503 }
+      );
+    }
+
+    const url = new URL("/refunds", backendUrl);
+
+    const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Accept: "application/json",
       },
       body: JSON.stringify(body),
       cache: "no-store",
@@ -24,7 +42,9 @@ export async function POST(request) {
     try {
       data = JSON.parse(responseText);
     } catch {
-      data = { detail: responseText || "Unexpected backend response" };
+      data = {
+        detail: responseText || "Unexpected backend response",
+      };
     }
 
     return NextResponse.json(data, {
@@ -35,11 +55,9 @@ export async function POST(request) {
 
     return NextResponse.json(
       {
-        detail:
-          "Could not connect to the refund service. Check that the FastAPI backend is running.",
+        detail: "Could not connect to the refund service.",
       },
       { status: 502 }
     );
   }
 }
-
